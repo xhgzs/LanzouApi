@@ -3,7 +3,7 @@
 可怜的就是Pandownload大佬了，哎。。。。
 缺点：非会员用户单次最多上传`100M`文件，优点就不用说了吧。
 ## 使用指南
-[点击这里](https://github.com/xhgzs/LanzouApi/releases/download/v1.1/LanzouApi.zip)下载并上传服务器运行即可
+[点击这里](https://github.com/xhgzs/LanzouApi/releases/download/v1.1/LanzouApi-master.zip)下载并上传服务器运行即可
 例:`http://127.0.0.1/api.php?lz=链接&pw=密码`
 参数`type=down`跳转直接下载
 ## 🎖️ 开发思路
