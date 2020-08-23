@@ -87,15 +87,16 @@ if (strpos($context,'function pwd()')!==false) {
         );
     }
 } else {
-    $context = $Fun->trimAll( $context );
-    $filename = $Fun->getSubstr($context,'class="md">','<');
-    $filesize = $Fun->getSubstr($context,'mtt">(',')');
-    $update = $Fun->getSubstr($context,'时间:</span>','<span');
-    $author = $Fun->getSubstr($context,'发布者:</span>','<span');
-    $desc = $Fun->getSubstr($context,'class="mdo">','<');
+    // $context = $Fun->trimAll( $context );
+    $filename = $Fun->getSubstr($context,'class="md">',' <');
+    $filesize = $Fun->getSubstr($context,'mtt">( ',' )');
+    $update = $Fun->getSubstr($context,'时间:</span>',' <span');
+    $author = $Fun->getSubstr($context,'发布者:</span>',' <span');
+    $desc = $Fun->getSubstr($context,'class="mdo">','\n');
     // echo $context;
-    $cdn = $Fun->getSubstr($context,"varcdomain='","';");
-    $fix = $Fun->getSubstr($context,"varsts='","';");
+    // $cdn = $Fun->getSubstr($context,"var cdomain='","';");
+    $cdn = 'https://vip.d0.baidupan.com/file/';
+    $fix = $Fun->getSubstr($context,"var urlload = '","';");
     // echo $cdn.$fix;
     if ($tp == 'down') {
         header('Location:'.$cdn.$fix);die;
