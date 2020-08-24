@@ -7,15 +7,16 @@
 例:`http://127.0.0.1/api.php?lz=链接&pw=密码`
 参数`type=down`跳转直接下载
 ## 🎖️ 开发思路
+一堆废话，想学习的请耐心看完
+
 1、抓包发现数据包内含有蓝奏文件直链接口<br>
 2、接口信息：`https://www.lanzous.com/ajaxm.php`<br>
-3、蓝奏云`猴精猴精`的，防止被人爬，居然加了注释干扰，然而这并没有什么卵用，在强大的正则面前都是渣渣，`这边发现PC端取出fn访问后，Sign处于源码中js动态添加文本，且为不一定性质，概括点说就是一会儿它添到var1中一会儿var2中`虽然还是在正则和判断面前没什么卵用，但是我就统一`UA`设置成`手机端`了，这样提交的参数Sign处于源码固定位置就好弄多了<br>
-通过浏览器控制台Ctrl+Shirt+f搜索到Sign传参存在于源码中
-分析参数都是不会变的，就Sign每次刷新都不一样，接下来就好办了，直接取呗
-取出Sign后带着参数+pwd密码请求即出结果:
+3、通过分析，（有无密码）只需取出Sign带着固定参数请求即出数据。通过浏览器控制台Ctrl+Shirt+f搜索到Sign传参存在于源码中，分析参数都是不会变的，就Sign每次刷新都不一样，接下来就好办了，直接取呗。取出Sign后带着参数+pwd密码（有密码的情况)请求即出结果:
 ```json
 {"zt":1,"dom":"https:\/\/vip.d0.baidupan.com","url":"?BGIAPlprUmNWX1ZuAjcAbAQ7V29U7QC9UtVRsQLqAbtQtFS\/Cs8AsQbcAcEFtFLDWogO4lGVVNAGL1YqXWgAcQQiADFablJqVmVWXwI\/AGUEY1djVD0AOlJlUW8CbQE2UGdUJQoxACcGbQFkBWJSalozDjNROVRwBnFWIF08ADMENABlWjdSKVYwVjICeQAxBG9XfVRpADVSYlFgAjwBMVBjVGEKYAAyBmYBZAVkUmNaNg47UT5UZwY3VmVdZwBjBGYAMlo0UmBWYlZlAm4AMwQ\/VzFUJQB4UjxRJwJ4AXVQI1RmCiUAPQY0AWoFZFJjWjIOOVE2VGYGJ1YkXWgAbARhADFaOlI3VjVWOQJjADgEbFdrVDkAOlJiUXkCeAF1UCBUPgpmAHoGdgExBT1SJFo9DjpRO1RvBjRWZl03ADcEMQBhWj5SIFZ1VnACIQA8BG9XZ1QzADJSYFFhAm0BNlBlVDsKcQAhBjkBJwVsUmJaMw4yUSBUZwY4VmldLwAwBDQAeVo2","inf":"\u6fc0\u6d3b\u4f18\u5316\u5408\u96c6.zip"}
 ```
+蓝奏云`猴精猴精`的，防止被爬，加了注释干扰，虽然正则可以解决，但是`这边发现PC端源码中不能直接取出Sign，Sign还处于第二个页面的链接中，也就是还得访问https://www.lanzous.com/fn?一堆类似token的数据才能搜索出需要的Sign参数，Sign参数位置处于js动态添加的一段代码中（好家伙，又加了注释干扰给正则增加难度，Sign出现的位置又是有概率的，概括点说就是一会儿它添到var1变量中一会儿var2中）`虽然正则还是可以解决，但是我就统一将`UA`设置成`手机端`了，这样提交的参数Sign就处于源码中固定位置，省去了繁琐的取数据<br>
+部分代码参考：
 ```php
 preg_match(/lanzous.com\/(.*)/,$lz,$id);
 // $lz网盘链接
@@ -28,7 +29,6 @@ $row = json_decode($context);
 // 这里解释一下，json_decode参数2为true时，可用数组形式输出结果集
 // 例如:$row['dom']，我为了省事就直接对象调用了
 ```
-好啦，没什么可说的了。<br>
 4、代码处理逻辑有待大家优化哦，留下你的评论吧😇
 ## 📖 更新日志
 ```
