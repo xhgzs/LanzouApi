@@ -1,18 +1,17 @@
 <?php
-
-class XhFun
+class xhFun
 {
-    public $ua = 'Mozilla/5.0 (Linux; Android 9; MI 6 Build/PKQ1.190118.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/76.0.3809.89 Mobile Safari/537.36 T7/11.19 SP-engine/2.15.0 baiduboxapp/11.19.5.10 (Baidu; P1 9)';
-
-    function xhGet($url,$header=''){
-        $options = array(
-            'http' => array(
-                'method' => 'GET',
-                'header' => $header,
-                'timeout' => 6*10
-            )
-        );
+    public $ua = 'User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1';
+    public function xhGet($url,$header=''){
         if ($header) {
+            $head = str_replace("|","\r\n",$header."|");
+            $options = array(
+                'http' => array(
+                    'method' => 'GET',
+                    'header' => $head,
+                    'timeout' => 6*10
+                )
+            );
             $context = stream_context_create($options);
             $result = file_get_contents($url,false,$context);
         } else {
@@ -20,17 +19,21 @@ class XhFun
         }
         return $result;
     }
-    function xhPost($url,$data,$header=''){
-        $postdata = http_build_query($data);
-        $options = array(
-            'http' => array(
-                'method' => 'POST',
-                'header' => $header,
-                'content' => $postdata,
-                'timeout' => 6*10
-            )
-        );
+    public function xhPost($url,$data,$header=''){
+        $postdata = $data;
+        if (is_array($data) or is_object($data)) {
+            $postdata = http_build_query($data);
+        }
         if ($header) {
+            $head = str_replace("|","\r\n",$header."|");
+            $options = array(
+                'http' => array(
+                    'method' => 'POST',
+                    'header' => $head,
+                    'content' => $postdata,
+                    'timeout' => 6*10
+                )
+            );
             $context = stream_context_create($options);
             $result = file_get_contents($url,false,$context);
         } else {
@@ -39,7 +42,7 @@ class XhFun
         return $result;
     }
     // 获取客户端ip
-    public static function ip(){if(getenv('HTTP_CLIENT_IP')){$a=getenv('HTTP_CLIENT_IP');}elseif(getenv('HTTP_X_FORWARDED_FOR')){$a=getenv('HTTP_X_FORWARDED_FOR');}elseif(getenv('HTTP_X_FORWARDED')){$a=getenv('HTTP_X_FORWARDED');}elseif(getenv('HTTP_FORWARDED_FOR')){$a=getenv('HTTP_FORWARDED_FOR');}elseif(getenv('HTTP_FORWARDED')){$a=getenv('HTTP_FORWARDED');}else{$a=$_SERVER['REMOTE_ADDR'];}return $a;}
+    public function ip(){if(getenv('HTTP_CLIENT_IP')){$a=getenv('HTTP_CLIENT_IP');}elseif(getenv('HTTP_X_FORWARDED_FOR')){$a=getenv('HTTP_X_FORWARDED_FOR');}elseif(getenv('HTTP_X_FORWARDED')){$a=getenv('HTTP_X_FORWARDED');}elseif(getenv('HTTP_FORWARDED_FOR')){$a=getenv('HTTP_FORWARDED_FOR');}elseif(getenv('HTTP_FORWARDED')){$a=getenv('HTTP_FORWARDED');}else{$a=$_SERVER['REMOTE_ADDR'];}return $a;}
     public function ip_(){
         $ip = $_SERVER['REMOTE_ADDR'];
         if (isset($_SERVER['HTTP_CLIENT_IP']) && preg_match('/^([0-9]{1,3}\.){3}[0-9]{1,3}$/', $_SERVER['HTTP_CLIENT_IP'])) {
@@ -77,7 +80,7 @@ class XhFun
         if($left < 0 or $right < $left) return '';
         return substr($str, $left + strlen($leftStr), $right-$left-strlen($leftStr));
     }
-    public function getSubStr_($content,$start,$end) {
+    public function getSubStr_($content,$start,$end){
         $r = explode($start, $content);
         if (isset($r[1])) {
             $r = explode($end, $r[1]);
@@ -95,6 +98,7 @@ class XhFun
             'Connection: keep-alive',
             'Pragma: no-cache',
             'Upgrade-Insecure-Requests: 1',
+            'User-Agent: '.$this->ua
         );
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -120,5 +124,12 @@ class XhFun
     public function trimAll($context){
         $str = array(" ","　","\t","\n","\r");
         return str_replace($str,'',$context);
+    }
+    // 过滤文本提取Url链接
+    public function toUrl($str){
+        if(empty($str))return '';
+        $reg = "/(http|https):\/\/([\w.]+\/?)\S*/";
+        preg_match($reg,$str,$link);
+        return $link[0];
     }
 }
